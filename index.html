@@ -1,87 +1,145 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="中学数学から高校数学、大学数学までをつなげて学ぶ数学教材サイト。" />
-  <title>数学航路 — 中学・高校・大学数学</title>
-  <link rel="icon" href="math-logo.svg" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a1728">
+  <meta name="description" content="公的地震想定データの表示と、条件を指定した学習用の地震・津波モデルを試せるブラウザーシミュレーター。">
+  <title>JAPAN QUAKE LAB | 地震・津波シミュレーター</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div id="app">
-    <header class="topbar">
-      <a class="brand" href="#/" aria-label="数学航路 ホーム">
-        <img src="math-logo.svg" alt="" class="brand-logo" />
-        <span class="brand-text"><span>数学航路</span><em>Mathematics, connected.</em></span>
-      </a>
-      <nav class="topnav" aria-label="主要メニュー">
-        <a href="#/">ホーム</a>
-        <a href="#/middle">中学</a>
-        <a href="#/high">高校</a>
-        <a href="#/university">大学</a>
-        <a href="#/practice">演習</a>
-      </nav>
-      <div class="actions">
-        <button class="icon-btn" id="searchButton" title="検索" aria-label="検索">⌕</button>
-        <button class="icon-btn" id="themeButton" title="ライト/ダーク切替" aria-label="ライト/ダーク切替">◐</button>
-        <button class="icon-btn mobile-only" id="menuButton" title="メニュー" aria-label="メニュー">☰</button>
-      </div>
-    </header>
-
-    <div class="search-panel" id="searchPanel" hidden>
-      <div class="search-box-wrap">
-        <input id="searchInput" type="search" placeholder="数学の記事を検索…" autocomplete="off" />
-        <kbd>ESC</kbd>
-      </div>
-      <div id="searchResults" class="search-results"></div>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="JAPAN QUAKE LAB ホーム">
+      <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span class="brand-copy"><strong>JAPAN QUAKE LAB</strong><small>地震・津波シミュレーター</small></span>
+    </a>
+    <div class="topbar-right">
+      <span class="status-dot"></span><span>ブラウザー内で動作</span>
+      <a class="top-link" href="README.md" target="_blank" rel="noopener">使い方 <span aria-hidden="true">↗</span></a>
     </div>
+  </header>
 
-    <div class="page-shell">
-      <aside class="sidebar" id="sidebar" aria-label="サイトメニュー">
-        <div class="sidebar-label">LEARNING PATH</div>
-        <section>
-          <div class="side-title">中学数学</div>
-          <a href="#/middle">中学数学の地図</a>
-          <a href="#/middle-number-algebra">数と式</a>
-          <a href="#/middle-linear">一次関数</a>
-          <a href="#/middle-geometry">図形と証明</a>
-        </section>
-        <section>
-          <div class="side-title">高校数学</div>
-          <a href="#/high">高校数学の地図</a>
-          <a href="#/high-quadratic">二次関数</a>
-          <a href="#/high-trig">三角関数</a>
-          <a href="#/high-calculus">微分と積分</a>
-          <a href="#/high-probability">確率と統計</a>
-        </section>
-        <section>
-          <div class="side-title">大学数学</div>
-          <a href="#/university">大学数学の地図</a>
-          <a href="#/university-linear">線形代数</a>
-          <a href="#/university-multi">多変数微積分</a>
-          <a href="#/university-analysis">解析の入り口</a>
-        </section>
-        <section>
-          <div class="side-title">演習</div>
-          <a href="#/practice">演習室</a>
-        </section>
-        <div class="side-note">draw it → name it → prove it</div>
-      </aside>
+  <main id="top" class="app-shell">
+    <aside class="control-panel">
+      <div class="eyebrow">SIMULATION CONTROL</div>
+      <h1>地震と津波を<br><em>見える化</em>する。</h1>
+      <p class="intro">公的な想定データと、仮定を変更する学習用モデルを分けて表示します。</p>
 
-      <main class="content" id="content"></main>
+      <div class="mode-switch" role="tablist" aria-label="シミュレーションモード">
+        <button class="mode-tab" id="tab-official" role="tab" aria-selected="false" aria-controls="panel-official">公的想定を再現</button>
+        <button class="mode-tab active" id="tab-custom" role="tab" aria-selected="true" aria-controls="panel-custom">条件を変えて試す</button>
+      </div>
 
-      <aside class="outline" id="outline" aria-label="このページの目次">
-        <div class="outline-title">このページの目次</div>
-        <nav id="outlineNav"></nav>
-      </aside>
-    </div>
+      <section id="panel-official" class="mode-panel" role="tabpanel" aria-labelledby="tab-official" hidden>
+        <div class="section-heading"><span class="step">01</span><div><h2>公的データを読み込む</h2><p>公式資料の数値を、推定値と混ぜずに表示します。</p></div></div>
+        <div class="source-callout">
+          <span class="source-icon" aria-hidden="true">↗</span>
+          <div><strong>内閣府・南海トラフ巨大地震</strong><p>2025年3月公表の計算結果、震度分布、津波高、到達時間など。</p><a href="https://www.bousai.go.jp/jishin/nankai/kento_wg/" target="_blank" rel="noopener">公式資料ページを開く</a></div>
+        </div>
+        <label class="field-label" for="official-file">整形済みCSVを選択</label>
+        <input id="official-file" class="file-input" type="file" accept=".csv,text/csv">
+        <p class="hint">公式PDFはケースや表の構成が複雑なため、このブラウザー版ではPDFを自動読取りしません。元資料と照合したCSVを読み込んでください。</p>
+        <a class="secondary-button full-width" href="data/official_scenario_template.csv" download>CSVテンプレートを保存 <span>↓</span></a>
+        <div id="official-file-status" class="file-status">公的データはまだ読み込まれていません。</div>
+        <div class="divider"></div>
+        <label class="field-label" for="official-source-filter">データ種別</label>
+        <select id="official-source-filter" class="control-select"><option value="all">すべて</option><option value="公的想定">公的想定</option><option value="実測">実測</option></select>
+        <label class="field-label" for="official-scenario-filter">シナリオ</label>
+        <select id="official-scenario-filter" class="control-select" disabled><option value="">CSV読込後に選択</option></select>
+        <label class="field-label" for="official-case-filter">ケース</label>
+        <select id="official-case-filter" class="control-select" disabled><option value="">CSV読込後に選択</option></select>
+        <label class="field-label" for="official-arrival-threshold">津波到達時間のしきい値</label>
+        <select id="official-arrival-threshold" class="control-select"><option value="1">1m 到達</option><option value="3">3m 到達</option><option value="5">5m 到達</option><option value="10">10m 到達</option><option value="20">20m 到達</option></select>
+        <button id="show-official" class="primary-button full-width" disabled>読み込んだデータを表示 <span>→</span></button>
+        <p class="hint warning-hint">「公的想定」は特定の条件を置いた計算結果であり、未来の地震の確定予報ではありません。「実測」は観測済みの記録を意味します。</p>
+      </section>
 
-    <footer class="footer">
-      <div>数学航路</div>
-      <div class="footer-note">公式を覚える。その先で、公式がなぜ生まれるかを見る。</div>
-    </footer>
-  </div>
-  <script src="script.js"></script>
+      <section id="panel-custom" class="mode-panel" role="tabpanel" aria-labelledby="tab-custom">
+        <div class="section-heading"><span class="step">01</span><div><h2>震源を設定</h2><p>複数の震源を追加して比較できます。</p></div></div>
+        <label class="field-label" for="epicenter-select">震源地の候補</label>
+        <select id="epicenter-select" class="control-select"></select>
+        <div class="form-grid two-col">
+          <div><label class="field-label" for="source-lat">緯度 (°)</label><input id="source-lat" class="control-input" type="number" min="20" max="75" step="0.0001" value="33.0"></div>
+          <div><label class="field-label" for="source-lon">経度 (°)</label><input id="source-lon" class="control-input" type="number" min="110" max="180" step="0.0001" value="136.5"></div>
+        </div>
+        <div class="form-grid two-col">
+          <div><label class="field-label" for="magnitude">マグニチュード (Mw)</label><p class="hint warning-hint">マグニチュードの入力上限はありません。結果は簡易式による参考推定で、実際の計測震度ではありません。極端に大きな値は現実の地震として妥当とは限らず、推定式の予測精度を保証しません。</p><input id="magnitude" class="control-input" type="number" min="4" step="0.1" value="8.0"></div>
+          <div><label class="field-label" for="depth">深さ (km)</label><input id="depth" class="control-input" type="number" min="1" max="700" step="1" value="20"></div>
+        </div>
+        <div class="divider"></div>
+        <div class="section-heading compact"><span class="step">02</span><div><h2>海底変位の仮定</h2><p>津波計算の初期条件です。</p></div></div>
+        <div class="form-grid two-col">
+          <div><label class="field-label" for="uplift">初期海面変位 (m)</label><input id="uplift" class="control-input" type="number" min="0" max="20" step="0.1" value="1.0"></div>
+          <div><label class="field-label" for="radius">変位の広がり (km)</label><input id="radius" class="control-input" type="number" min="5" max="500" step="5" value="80"></div>
+        </div>
+        <label class="field-label" for="water-depth">仮定する外洋の水深 (m)</label>
+        <input id="water-depth" class="control-input" type="number" min="100" max="12000" step="100" value="4000">
+        <button id="lookup-water-depth" class="secondary-button full-width" type="button">🌊 震源位置の水深をデータから取得</button>
+        <div id="bathymetry-status" class="file-status" aria-live="polite">震源位置に応じてGEBCO 2020の標高・水深データを自動取得します（インターネット接続が必要）。</div>
+        <p class="hint">データ：GEBCO 2020（全球標高・水深）。震源座標の1点サンプルを取得し、海底水深の参考値にします。沿岸の水深分布を解く津波モデルではありません。取得に失敗した場合は手動入力値を使用します。</p>
+        <p class="hint warning-hint">震度スクリーニング式：I* = a·Mw − b·log₁₀(R) − c。係数は説明用の仮置きで、日本向けに校正された距離減衰式ではありません。最大震度カードは結果一覧と同じ全地点データから算出します。</p>
+        <button id="add-source" class="secondary-button full-width">＋ この震源を追加</button>
+        <div class="source-list-heading"><span>登録した震源</span><span id="source-count" class="count-badge">1</span></div>
+        <div id="source-list" class="source-list" aria-live="polite"></div>
+        <div class="form-grid">
+          <div><label class="field-label" for="duration">計算対象時間 (分)</label><input id="duration" class="control-input" type="number" min="10" max="360" step="10" value="180"></div>
+        </div>
+        <button id="run-custom" class="primary-button full-width">シミュレーション実行 <span>→</span></button>
+        <p class="hint warning-hint">結果は学習用の参考推定です。正式な震度予測や沿岸での津波予測ではなく、避難判断には使えません。</p>
+      </section>
+
+      <div class="sidebar-footer"><span class="shield-icon" aria-hidden="true">!</span><p><strong>防災判断には使用しないでください</strong><br>実際の地震では気象庁・自治体の発表に従ってください。</p></div>
+    </aside>
+
+    <section class="workspace" aria-label="シミュレーション結果">
+      <div class="workspace-topline">
+        <div><div class="eyebrow">JAPAN / LIVE CANVAS</div><h2 id="workspace-title">日本列島マップ</h2><p id="workspace-subtitle">震源と地点ごとの参考値を地図上で確認できます。</p></div>
+        <div id="data-badge" class="data-badge estimate"><span class="badge-dot"></span><span>モデル推定</span></div>
+      </div>
+      <div class="map-card">
+        <div class="map-toolbar">
+          <div class="map-toolbar-label"><span class="toolbar-pin" aria-hidden="true">◎</span><span id="map-layer-name">地点別の参考震度</span></div>
+          <select id="map-layer-select" class="map-layer-select" aria-label="地図レイヤー"><option value="intensity">震度</option><option value="tsunami">津波高</option><option value="epicenters">震源</option></select>
+          <label class="label-toggle"><input type="checkbox" id="show-labels"><span>地点名</span></label>
+          <button id="reset-map" class="icon-button" title="地図の表示をリセット" aria-label="地図の表示をリセット">↺</button>
+        </div>
+        <div class="map-frame" id="map-frame">
+          <svg id="map-svg" viewBox="0 0 920 760" role="img" aria-label="日本地図。地点マーカーに値が表示されます。">
+            <defs><pattern id="grid-pattern" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M 42 0 L 0 0 0 42" fill="none" stroke="#a4c1ca" stroke-opacity=".19" stroke-width="1"/></pattern></defs>
+            <rect width="920" height="760" fill="url(#grid-pattern)"/>
+            <g id="map-land"></g><g id="map-points"></g><g id="map-epicenters"></g>
+          </svg>
+          <div id="map-empty" class="map-empty" hidden><div class="empty-icon">⌁</div><strong>まだ結果がありません</strong><p>震源を登録してシミュレーションを実行するか、公的データのCSVを読み込んでください。</p></div>
+          <div class="map-compass" aria-hidden="true"><span>N</span><b>↑</b></div>
+          <div class="map-scale"><span>日本列島</span><span>概略位置図</span></div>
+        </div>
+        <div id="map-legend" class="map-legend"></div>
+      </div>
+
+      <div class="metrics-row">
+        <article class="metric-card"><div class="metric-label">震度1以上</div><div class="metric-value" id="metric-intensity">—</div><div class="metric-foot">代表地点の件数</div><span class="metric-symbol shake">≈</span></article>
+        <article class="metric-card"><div class="metric-label">津波高 10cm以上</div><div class="metric-value" id="metric-tsunami">—</div><div class="metric-foot">沿岸代表地点の件数</div><span class="metric-symbol wave">⌁</span></article>
+        <article class="metric-card"><div class="metric-label">最大震度</div><div class="metric-value" id="metric-max-intensity">—</div><div class="metric-foot" id="metric-max-place">計算前</div><span class="metric-symbol peak">↗</span></article>
+        <article class="metric-card"><div class="metric-label">最大津波高</div><div class="metric-value" id="metric-max-tsunami">—</div><div class="metric-foot" id="metric-max-tsunami-place">計算前</div><span class="metric-symbol water">≈</span></article>
+      </div>
+
+      <section class="results-card">
+        <div class="results-head"><div><div class="eyebrow">RESULTS / TABLE</div><h2>計算結果の一覧</h2></div><button id="export-csv" class="secondary-button export-button" disabled>CSVを書き出す <span>↓</span></button></div>
+        <div class="result-tabs" role="tablist" aria-label="結果一覧の種類">
+          <button class="result-tab active" data-table="intensity" role="tab" aria-selected="true">震度1以上 <span id="tab-count-intensity">0</span></button>
+          <button class="result-tab" data-table="tsunami" role="tab" aria-selected="false">津波10cm以上 <span id="tab-count-tsunami">0</span></button>
+          <button class="result-tab" data-table="all" role="tab" aria-selected="false">全地点 <span id="tab-count-all">0</span></button>
+        </div>
+        <div class="table-meta"><span id="table-description">計算を実行すると結果が表示されます。</span><span id="row-count">0件</span></div>
+        <div class="table-wrap"><table><thead><tr><th>地点</th><th>区分</th><th>震度</th><th>津波高</th><th>到達時間</th><th>データ区分</th></tr></thead><tbody id="results-body"><tr class="placeholder-row"><td colspan="6">ここに結果が表示されます。</td></tr></tbody></table></div>
+        <p class="table-footnote">地図と一覧は選択したデータに基づきます。未提供の値は「—」とし、ゼロとは区別します。自由設定モードは各震源の値を簡易計算で比較し、物理的な同時重ね合わせは行いません。</p>
+      </section>
+      <footer class="page-footer"><span>JAPAN QUAKE LAB · Web Edition</span><span>防災予測ではありません · <a href="https://www.jma.go.jp/" target="_blank" rel="noopener">気象庁公式サイト ↗</a></span></footer>
+    </section>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
